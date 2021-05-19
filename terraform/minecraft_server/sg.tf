@@ -9,7 +9,7 @@ resource "aws_security_group_rule" "minecraft_ssh_ingress" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = [var.ssh_cidr_blocks]
+  cidr_blocks       = var.ssh_cidr_blocks
   security_group_id = aws_security_group.minecraft.id
 
 }
@@ -19,9 +19,8 @@ resource "aws_security_group_rule" "minecraft_default_ingress" {
   from_port         = var.minecraft_server_port
   to_port           = var.minecraft_server_port
   protocol          = "tcp"
-  cidr_blocks       = [var.minecraft_allowed_cidr_blocks]
+  cidr_blocks       = var.minecraft_allowed_cidr_blocks
   security_group_id = aws_security_group.minecraft.id
-
 }
 
 resource "aws_security_group_rule" "minecraft_egress" {
