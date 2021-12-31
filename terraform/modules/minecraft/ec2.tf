@@ -11,8 +11,10 @@ resource "aws_autoscaling_group" "minecraft" {
     create_before_destroy = true
   }
 
-  launch_configuration = aws_launch_configuration.minecraft.name
-  vpc_zone_identifier  = var.public_subnets
+  launch_template {
+    id = aws_launch_template.minecraft.id
+  }
+  vpc_zone_identifier = var.public_subnets
 
   tag {
     key                 = "environment"
@@ -31,7 +33,7 @@ resource "aws_autoscaling_group" "minecraft" {
   }
 }
 
-resource "aws_launch_configuration" "minecraft" {
+resource "aws_launch_template" "minecraft" {
   name_prefix          = "minecraft"
   image_id             = var.ec2_ami
   instance_type        = var.ec2_instance_type
@@ -43,10 +45,28 @@ resource "aws_launch_configuration" "minecraft" {
     create_before_destroy = true
   }
 
-  root_block_device {
-    delete_on_termination = "true"
-    volume_size           = var.ec2_root_vol_size
-    volume_type           = "gp2"
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      delete_on_termination = "true"
+      volume_size           = var.ec2_root_vol_size
+      volume_type           = "gp2"
+    }
+  }
+
+  dynamic "block_device_mappings" {
+    for_each = var.ebs_block_devices
+    content {
+      device_name = ebs_block_device.value.device_name
+      ebs {
+        delete_on_termination = lookup(ebs_block_device.value, "delete_on_termination", null)
+        encrypted             = lookup(ebs_block_device.value, "encrypted", null)
+        iops                  = lookup(ebs_block_device.value, "iops", null)
+        snapshot_id           = lookup(ebs_block_device.value, "snapshot_id", null)
+        volume_size           = lookup(ebs_block_device.value, "volume_size", null)
+        volume_type           = lookup(ebs_block_device.value, "volume_type", null)
+      }
+    }
   }
 }
 
