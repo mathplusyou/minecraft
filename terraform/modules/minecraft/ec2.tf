@@ -34,12 +34,14 @@ resource "aws_autoscaling_group" "minecraft" {
 }
 
 resource "aws_launch_template" "minecraft" {
-  name_prefix          = "minecraft"
-  image_id             = var.ec2_ami
-  instance_type        = var.ec2_instance_type
-  iam_instance_profile = aws_iam_instance_profile.minecraft.name
-  key_name             = aws_key_pair.minecraft.key_name
-  security_groups      = [aws_security_group.minecraft.id]
+  name_prefix   = "minecraft"
+  image_id      = var.ec2_ami
+  instance_type = var.ec2_instance_type
+  iam_instance_profile {
+    name = aws_iam_instance_profile.minecraft.name
+  }
+  key_name        = aws_key_pair.minecraft.key_name
+  security_groups = [aws_security_group.minecraft.id]
 
   lifecycle {
     create_before_destroy = true
