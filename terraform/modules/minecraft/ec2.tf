@@ -59,14 +59,14 @@ resource "aws_launch_template" "minecraft" {
   dynamic "block_device_mappings" {
     for_each = var.ebs_block_devices
     content {
-      device_name = ebs_block_device.value.device_name
+      device_name = ebs_block_devices.value.device_name
       ebs {
-        delete_on_termination = lookup(ebs_block_device.value, "delete_on_termination", null)
-        encrypted             = lookup(ebs_block_device.value, "encrypted", null)
-        iops                  = lookup(ebs_block_device.value, "iops", null)
-        snapshot_id           = lookup(ebs_block_device.value, "snapshot_id", null)
-        volume_size           = lookup(ebs_block_device.value, "volume_size", null)
-        volume_type           = lookup(ebs_block_device.value, "volume_type", null)
+        delete_on_termination = lookup(ebs_block_devices.value, "delete_on_termination", null)
+        encrypted             = lookup(ebs_block_devices.value, "encrypted", null)
+        iops                  = lookup(ebs_block_devices.value, "iops", null)
+        snapshot_id           = lookup(ebs_block_devices.value, "snapshot_id", null)
+        volume_size           = lookup(ebs_block_devices.value, "volume_size", null)
+        volume_type           = lookup(ebs_block_devices.value, "volume_type", null)
       }
     }
   }
